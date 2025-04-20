@@ -4,9 +4,8 @@ This repository implements the magic eye algorithm, which became famous in the 1
 
 <p align="center">
   <a href="http://www.kaltekreise.de">
-  <video playsinline muted loop alt="autostereogram video">
-    <source src="./video_640px.mp4" type="video/mp4">
-    <font color="#9900FF">Your browser does not support the video format.</font>
-  </video>
+    <video src="https://github.com/hahnec/autostereogram/raw/refs/heads/main/video_640px.mp4" controls autoplay loop muted>
+      Link: https://github.com/hahnec/autostereogram/raw/refs/heads/main/video_640px.mp4
+    </video>
   </a>
 </p>
