@@ -34,12 +34,15 @@ color_from_uint8 = lambda color_tuple: [c / 255 for c in color_tuple]
 red_uint8 = (210, 31, 60)
 
 cwd = Path(__file__).parent
-frame_path = cwd / 'frame_image'
-frame_path.mkdir(exist_ok=True)
 single_opt = False
-frame_num = 1 if single_opt else 32*7
+save_img_files = False
+if save_img_files:
+    frame_path = cwd / 'frame_image'
+    frame_path.mkdir(exist_ok=True)
+frame_num = 1 if single_opt else 600//5*4
 
 frame = render_autostereogram(depth, pattern_size=128*4, invert=True, blur_sigma=4, seed=38855, iter_index=0)
+frame = frame[32:-32, 32:-32] # crop frame to yield valid frame rate
 imageio.imwrite('frame_image.png', (255*(frame-frame.min())/(frame.max()-frame.min())).astype(np.uint8))
 
 # stack copies of image vertically
@@ -54,21 +57,18 @@ red_hi = color_from_uint8(red_uint8)
 red_hi = color_from_uint8([255, 42, 6])
 frame = convert2rgb_uint8(frame, red_hi)
 
-frame_list = []
-for i in range(frame_num):
-    
-    step = i*(frame.shape[0]//3//frame_num)
-    frame_list.append(frame.copy()[step:step+frame.shape[0]//3])
-
-    imageio.imwrite(frame_path / ('frame_image' + '_' + str(i) + '.png'), frame_list[-1])
-
 # Create a writer object
 output_video_path = frame_path.parent / 'video.mp4'
-writer = imageio.get_writer(output_video_path, fps=frame_num // 8)
+writer = imageio.get_writer(output_video_path, fps=20)
 
 # Iterate through the images and add them to the video writer
-for frame in frame_list:
-    writer.append_data(frame)
+for i in range(frame_num):
+    
+    step = i*(frame.shape[0]//frame_num//3)
+    curr_frame = frame.copy()[step:step+frame.shape[0]//3]
+
+    if save_img_files or single_opt: imageio.imwrite(frame_path / ('frame_image' + '_' + str(i) + '.png'), curr_frame)
+    writer.append_data(curr_frame)
 
 # Close the writer
 writer.close()
