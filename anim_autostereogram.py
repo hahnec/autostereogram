@@ -36,8 +36,8 @@ red_uint8 = (210, 31, 60)
 cwd = Path(__file__).parent
 single_opt = False
 save_img_files = False
+frame_path = cwd / 'frame_image'
 if save_img_files:
-    frame_path = cwd / 'frame_image'
     frame_path.mkdir(exist_ok=True)
 frame_num = 1 if single_opt else 600//5*4
 
