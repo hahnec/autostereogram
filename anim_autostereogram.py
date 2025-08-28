@@ -58,7 +58,7 @@ red_hi = color_from_uint8([255, 42, 6])
 frame = convert2rgb_uint8(frame, red_hi)
 
 # Create a writer object
-output_video_path = frame_path.parent / 'video.mp4'
+output_video_path = frame_path.parent / 'video.webm'
 writer = imageio.get_writer(output_video_path, fps=20)
 
 # Iterate through the images and add them to the video writer
@@ -72,3 +72,23 @@ for i in range(frame_num):
 
 # Close the writer
 writer.close()
+
+# webm conversion
+ffmpeg_command = [
+    "ffmpeg",
+    "-i", str(output_video_path),
+    "-c:v", "libvpx-vp9",
+    "-b:v", "500k"
+    "-crf", "30",
+    "-pix_fmt", "yuv420p",
+    "-vf", "scale=iw:ih",
+    "-an",
+    output_file.with_suffix('.webm')
+]
+
+# Execute the command
+try:
+    subprocess.run(ffmpeg_command, check=True)
+    print(f"Conversion completed: {output_file}")
+except subprocess.CalledProcessError as e:
+    print(f"An error occurred: {e}")
